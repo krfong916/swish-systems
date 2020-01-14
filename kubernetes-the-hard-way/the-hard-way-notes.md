@@ -131,3 +131,23 @@ When generating a kubeconfig file for a kubelet (worker node), we must use the c
 We have to generate configs for the kubelets, controllers, proxy, admin, and scheduler
 
 https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
+
+## Encryption
+
+Not sure how the controller uses encryption or why the encryption-config file has to exist on the controller
+
+## etcd
+
+etcd is a distributed k,v store for each node in the k8s cluster.
+etcd uses Raft consensus algorithm for consensus of writes and leader election
+For the etcd cluster we've created - each etcd server is configured to be highly available and securely, remote-accessible
+
+## RBAC
+
+configuration for remote access - role based access control
+
+- restricting information and feature access based on role of user within an enterprise
+- in k8s-the-hard-way, we configure the k8s API server to access the Kubelet API on each worker node
+
+The external load balancer fronting the kubernetes api servers
+they send out http health checks to test fir readiness and liveness of a server (liveness, servers in farm may not always be on)
