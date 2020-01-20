@@ -19,6 +19,8 @@ For instance, when we create resource in Google Cloud, we choose a network and s
 
 ## Classless Inter-Domain Routing (CIDR)
 
+system of defining the network part of an IP address, It allows a way to break IP networks down more flexibly
+
 ## IPv4 exhaustion
 
 ## Egress and Ingress
@@ -180,6 +182,10 @@ Service Account Admission Controller:
 
 https://www.ibm.com/support/knowledgecenter/en/SSS28S_3.0.0/com.ibm.help.forms.doc/Designer_User_Manual/i_bpfd_g_certificate_attributes.html
 
+## runc
+
+a CLI tool for spawning and running containers according to the OCI specification (a standards specification). This tool can handle creating, starting, and deleting containers such as Docker.
+
 ## Kubelet TLS bootstrapping
 
 ## kubectl
@@ -189,3 +195,102 @@ https://www.ibm.com/support/knowledgecenter/en/SSS28S_3.0.0/com.ibm.help.forms.d
 ## persistent sessions
 
 ## dynamic weights
+
+## linux filesystem
+
+- /var/lib
+  - holds state information (data that programs modify while they run, and pertains to one specific host) about an application or the system. We should never need to modify any of packages installed here. An application will use a subdirectory for its data
+
+source: https://www.howtogeek.com/117435/htg-explains-the-linux-directory-structure-explained/
+https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch05s08.html
+
+## tar
+
+the tar command in Linux compresses a group of files into an archive. The tar archive combines multiple files and/or directories together into a single file. They don't have to be, but they can be compressed.
+source: https://www.freecodecamp.org/news/tar-in-linux-example-tar-gz-tar-file-and-tar-directory-and-tar-compress-commands/
+
+## bridge networking
+
+Bridging is important for networking between container.
+A bridge allows containers to communicate with the external network or other containers when connected with the same bridge.
+How do namespace, virtual ethernet netwokring, NAT, and IPtables effect bridge networking?
+source:
+https://static.sched.com/hosted_files/kccna18/c1/slides.pdf
+
+## ipam
+
+IP address management - an aspect of container networking. Simple approaches out of the box for k8s assume static allocation of a fixed set of addresses to each node. A software package like Calico provides users more control of dynamic IPAM.
+
+## gateway
+
+an entrypoint for client requests. requests are proxied/routed to
+appropriate services
+
+## ipmasq
+
+https://kubernetes.io/docs/tasks/administer-cluster/ip-masq-agent/
+
+## Open Container Initiative - OCI
+
+CNI, the container network interface, consists of libraries of plugins to configure network interfaces in Linux containers. It is about making the networking layer modular and pluggable. CNI is about network connectivity and removing resources when the container is deleted.
+
+## K8s proxies
+
+- kubectl proxy
+  - runs in a pod
+  - locates api server
+  - adds authentication headers
+  - client to proxy uses HTTP
+  - proxy to apiserver uses HTTPS
+- apiserver proxy
+  - a bastion (special-use computer, typically only hosts a proxy server to limit vector of attack) built into apiserver
+  - connects user outside of cluster to cluster IPs
+  - can be used to reach a node, pod, or Service
+  - does lb when used to reac a Service
+  - client to proxy uses HTTPS
+  - proxy to target may use either HTTP/HTTPS as chosen by proxy using availabile info
+- kube proxy
+  - runs on each node
+  - only used to reach services
+  - proxies UDP, TCP, SCTP
+  - does not understand HTTP
+- proxy/lb in front of apiserver
+  - sits between clients and one or more apiservers
+  - see source for more info
+- cloud lbs on external servers
+  - see source for more info
+    source: https://kubernetes.io/docs/concepts/cluster-administration/proxies/
+
+to visit:
+
+- bridges
+  - https://medium.com/@tao_66792/how-does-the-kubernetes-networking-work-part-1-5e2da2696701
+  - https://kubernetes.io/docs/concepts/cluster-administration/networking/
+- ipmasq
+  - https://kubernetes.io/docs/tasks/administer-cluster/ip-masq-agent/
+- ipam and calico
+  - https://www.projectcalico.org/calico-ipam-explained-and-enhanced/
+- VPC networking 101
+  - https://www.youtube.com/watch?v=bGDMeD6kOz0&list=PLHXypkA_QmQJELQLjQmanpFagpf8yZGZp&index=7&t=0s
+
+## pods
+
+pods encapsulate the container runtime
+pods networking model solves issues of port allocation, naming, service discovery, load balancing, and app config. Pods on a node can communicate wiht all pods on all nodes without network address tranlsation.
+Agents on a node (daemons, kubelets) can communicate with all pods on that node.
+In order to setup pod network routes (pods being able to communicate with other pods), we need to setup network routes. Pods will receive an IP address from the node's Pod CIDR range via a routing table
+
+Clusters can be distinguished according to the way they route traffic from one Pod to another Pod. A cluster that uses google cloud routes is called a routes-based cluster.
+A routes-based cluster has a range of IP addresses used for Pods and Services. The Pod address range is called `clusterIpv4Cidr`, and the range of services is called `servicesIpv4Cidr`.
+A route provides a next hop for any packet that is destined for a particular Pod address range. Routes match packets by destination IP address.
+
+source:
+
+- https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-achieve-this
+- https://cloud.google.com/kubernetes-engine/docs/how-to/routes-based-cluster
+- https://www.google.com/search?q=kubernetes+architecture&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjx3Zry45DnAhUFWq0KHRhhCj4Q_AUoAXoECBAQAw&biw=1118&bih=645#imgrc=QUejyBfRN5jDxM:
+
+## scheduler
+
+In Kubernetes, scheduling refers to making sure that Pods are matched to Nodes so that Kubelet can run them.
+A scheduler watches for newly created Pods that have no Node assigned. For every Pod that the scheduler discovers, the scheduler becomes responsible for finding the best Node for that Pod to run on.
