@@ -69,7 +69,8 @@ Consider the scenario: The leader recovers from failure
 - `S` may, or may not write the offset.
 - If all `S` write - they reply with an ack. to the `P` and `P` replies `"yes"` to `C`
 - If not all `S` ack. then `"no"` is returned
-- Client retries if `"no` (failure). Eventually all data would be written through repeated retries from client
+- Client retries if `"no` (failure). `C` repeats the process (of requesting to `L`, `L` collecting the most recent `V#` and set of `P` and `S` and returning the list to the client). Eventually all data would be written through repeated retries from client
+- Keep in mind: there may be many clients reading and writing concurrently. Therefore the view of data that other clients may read will be inconsistent; this is the consistency model GFS accepts.
 
 * Good properties for successful writes
 * Not so good properties for unsuccessful writes
