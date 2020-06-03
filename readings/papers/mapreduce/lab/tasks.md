@@ -1,0 +1,14 @@
+- [ ] workers talk to master via RPC
+- [ ] worker process ask master for a task
+- [ ] worker process reads the task's input from one or more files
+- [ ] worker executes the task
+- [ ] worker writes the task's output to one or more files
+- [ ] master detects if a worker has not completed its task within a timeout period
+- [ ] master hands timed out task to a different worker
+
+- My guess is that a worker runs on a goroutine (thread). In this lab, Goroutines == workers
+- what is a master and what does a master do? Meaning, what is the behavior of the master?
+  - what functions does the master call?
+  - what shared resources does the master have to keep track of?
+  - what does the master return?
+- The worker should put intermediate Map output in files in the current directory, where your worker can later read them as input to Reduce tasks.
